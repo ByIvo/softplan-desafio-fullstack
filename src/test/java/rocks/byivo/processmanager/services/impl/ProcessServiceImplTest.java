@@ -59,6 +59,20 @@ public class ProcessServiceImplTest {
 	assertThat(savedProcess.getCreatedAt(), between(saveStartedMoment, saveFinishedMoment));
 	assertThat(savedProcess.getUpdatedAt(), between(saveStartedMoment, saveFinishedMoment));
     }
+    
+    private ProcessDTO buildNewProcessData() {
+	return new ProcessBuilder()
+		.withName(PROCESS_NAME)
+		.build()
+		.toTransferObject();
+    }
+    
+    private Process captureSavedTaskFromRepository() {
+	ArgumentCaptor<Process> processCaptor = ArgumentCaptor.forClass(Process.class);
+	verify(processRepository).save(processCaptor.capture());
+	return processCaptor.getValue();
+    }
+    
 
     private Matcher<Date> between(Date startDate, Date endindDate) {
 
@@ -83,19 +97,6 @@ public class ProcessServiceImplTest {
 	    }
 
 	};
-    }
-    
-    private ProcessDTO buildNewProcessData() {
-	return new ProcessBuilder()
-		.withName(PROCESS_NAME)
-		.build()
-		.toTransferObject();
-    }
-    
-    private Process captureSavedTaskFromRepository() {
-	ArgumentCaptor<Process> processCaptor = ArgumentCaptor.forClass(Process.class);
-	verify(processRepository).save(processCaptor.capture());
-	return processCaptor.getValue();
     }
     
 }
