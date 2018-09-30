@@ -1,41 +1,42 @@
 package rocks.byivo.processmanager.controllers;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import rocks.byivo.processmanager.dto.ProcessDTO;
+import rocks.byivo.processmanager.dto.ProcessStandDTO;
 import rocks.byivo.processmanager.model.Process;
+import rocks.byivo.processmanager.model.ProcessStand;
 import rocks.byivo.processmanager.services.ProcessService;
+import rocks.byivo.processmanager.services.ProcessStandService;
 
 @RestController
-@RequestMapping("/processes")
-public class ProcessController {
+@RequestMapping("processes/{idProcess}/stands")
+public class ProcessStandController {
+
+    private ProcessStandService processStandService;
     
     private ProcessService processService;
     
     @Autowired
-    public ProcessController(ProcessService processService) {
+    public ProcessStandController(ProcessStandService processStandService, ProcessService processService) {
+	this.processStandService = processStandService;
 	this.processService = processService;
     }
 
     @PostMapping
-    public ResponseEntity<ProcessDTO> create(@RequestBody ProcessDTO newProcessFromClient) {
-	Process createdProcess = processService.createProcessWith(newProcessFromClient);
-	return new ResponseEntity<>(createdProcess.toTransferObject(), CREATED);
-    }
-    
-    @GetMapping("{idProcess}")
-    public ResponseEntity<ProcessDTO> create(@PathVariable("idProcess") Long idProcess) {
+    public ResponseEntity<ProcessStandDTO> createNewStand(
+	    @PathVariable("idProcess") Long idProcess, @RequestBody ProcessStandDTO newProcessStand) {
 	Process foundProcess = processService.find(idProcess);
-	return new ResponseEntity<>(foundProcess.toTransferObject(), OK);
+	
+	ProcessStand createdStand = processStandService.standForProcess(foundProcess, newProcessStand);
+	
+	return new ResponseEntity<>(createdStand.toTransferObject(), CREATED);
     }
 }
