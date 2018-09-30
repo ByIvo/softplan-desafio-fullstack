@@ -34,7 +34,7 @@ public class ProcessController {
     }
     
     @GetMapping("{idProcess}")
-    public ResponseEntity<ProcessDTO> create(@PathVariable("idProcess") Long idProcess) {
+    public ResponseEntity<ProcessDTO> find(@PathVariable("idProcess") Long idProcess) {
 	Process foundProcess = processService.find(idProcess);
 	return new ResponseEntity<>(foundProcess.toTransferObject(), OK);
     }
